@@ -1,0 +1,14 @@
+{
+  "name": "dexterity",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DEXterity: compact Champions-first VGC reference app.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@smogon/calc": "^0.11.0",
+    "cheerio": "^1.2.0"
+  }
+}

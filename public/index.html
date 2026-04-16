@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DEXterity</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Game8 + Pikalytics + PokeAPI</p>
+          <h1>DEXterity</h1>
+        </div>
+        <p class="tagline">Compact doubles reference for fast in-match checks.</p>
+      </header>
+
+      <section class="lookup-panel panel">
+        <form id="lookup-form" class="lookup-form">
+          <label class="sr-only" for="pokemon-query">Pokemon lookup</label>
+          <input
+            id="pokemon-query"
+            name="query"
+            type="text"
+            autocomplete="off"
+            placeholder="Name or Dex #"
+            required
+          />
+          <button type="submit">Lookup</button>
+        </form>
+        <p id="lookup-status" class="status-line">Search a Pokemon to load stats, usage trends, and quick matchup calcs.</p>
+      </section>
+
+      <section class="workspace-grid">
+        <section class="panel compact-card" id="pokemon-panel">
+          <div class="placeholder">
+            <p>Base stats, usage trends, auto matchup lines, and Game8 doubles notes will appear here.</p>
+          </div>
+        </section>
+
+        <section class="panel calc-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Quick Damage</p>
+              <h2>Level 50 Doubles Calc</h2>
+            </div>
+          </div>
+
+          <div class="calc-grid">
+            <div class="calc-card">
+              <div class="calc-card-head">
+                <h3>Attacker</h3>
+                <button class="ghost-button" type="button" data-fill-role="attacker">Use lookup</button>
+              </div>
+              <label>
+                <span>Name</span>
+                <input id="attacker-name" placeholder="Flutter Mane" />
+              </label>
+              <label>
+                <span>Build</span>
+                <select id="attacker-build">
+                  <option value="">Base set</option>
+                </select>
+              </label>
+              <label>
+                <span>Move</span>
+                <select id="move-select">
+                  <option value="">Choose move</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="calc-card">
+              <div class="calc-card-head">
+                <h3>Defender</h3>
+                <button class="ghost-button" type="button" data-fill-role="defender">Use lookup</button>
+              </div>
+              <label>
+                <span>Name</span>
+                <input id="defender-name" placeholder="Incineroar" />
+              </label>
+              <label>
+                <span>Build</span>
+                <select id="defender-build">
+                  <option value="">Base set</option>
+                </select>
+              </label>
+              <button id="load-defender" type="button" class="secondary-button">Load defender</button>
+            </div>
+          </div>
+
+          <div class="calc-actions">
+            <button id="run-calc" type="button">Calculate</button>
+            <p id="calc-status" class="status-line">Load attacker and defender builds, then choose a move.</p>
+          </div>
+
+          <details class="calc-advanced">
+            <summary>Advanced</summary>
+            <div class="advanced-grid">
+              <label>
+                <span>Weather</span>
+                <select id="calc-weather">
+                  <option value="">None</option>
+                  <option value="Sun">Sun</option>
+                  <option value="Rain">Rain</option>
+                  <option value="Sand">Sand</option>
+                  <option value="Snow">Snow</option>
+                </select>
+              </label>
+              <label>
+                <span>Terrain</span>
+                <select id="calc-terrain">
+                  <option value="">None</option>
+                  <option value="Electric">Electric</option>
+                  <option value="Grassy">Grassy</option>
+                  <option value="Psychic">Psychic</option>
+                  <option value="Misty">Misty</option>
+                </select>
+              </label>
+              <label>
+                <span>Atk Stage</span>
+                <select id="attacker-stage"></select>
+              </label>
+              <label>
+                <span>Def Stage</span>
+                <select id="defender-stage"></select>
+              </label>
+            </div>
+            <div class="advanced-toggles">
+              <label class="toggle-chip"><input id="calc-helping-hand" type="checkbox" />Helping Hand</label>
+              <label class="toggle-chip"><input id="calc-burned" type="checkbox" />Burned</label>
+              <label class="toggle-chip"><input id="calc-reflect" type="checkbox" />Reflect</label>
+              <label class="toggle-chip"><input id="calc-light-screen" type="checkbox" />Light Screen</label>
+              <label class="toggle-chip"><input id="calc-crit" type="checkbox" />Crit</label>
+            </div>
+          </details>
+
+          <div id="calc-result" class="calc-result empty">
+            <p>Damage output will land here.</p>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>
