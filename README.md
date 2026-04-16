@@ -1,15 +1,24 @@
 # DEXterity
 
-DEXterity is a compact, Champions-first VGC reference app built for fast mid-match lookups. Search by Pokemon name or Pokedex number to see stats, typings, abilities, common moves and items, EV guidance, and quick damage calculations without digging through multiple sites.
+DEXterity is a compact, Champions-first VGC reference app built for fast mid-match decision support. Search by Pokemon name or Pokedex number to pull up stats, typings, abilities, common moves and items, EV guidance, and quick damage calculations in one place.
+
+It is designed to be readable under time pressure: compact cards, clear labels, and matchup-focused information that is useful during team preview or in the middle of a set.
 
 ## Features
 
 - Champions-first source selection, with Scarlet and Violet fallback when Champions data is unavailable
-- Common moves and item usage from Pikalytics
+- Common moves and common items pulled from Pikalytics
 - EV and build fallback from Game8 when usage spread data is missing
-- Base stats, typing, and ability blurbs from PokeAPI
-- Automatic quick-reference damage calcs into top meta matchups
-- Manual level 50 doubles damage calculator with a compact advanced options drawer
+- Base stats, typings, and ability blurbs from PokeAPI
+- Automatic quick-reference damage calcs into common meta matchups
+- Manual level 50 doubles damage calculator with compact advanced options
+
+## Why DEXterity
+
+- Built for quick reference instead of long-form analysis
+- Keeps Champions data prioritized as the format grows
+- Combines usage data, curated builds, and damage checks in a single lookup flow
+- Stays compact enough to use during a match without digging through tabs
 
 ## Data Sources
 
@@ -27,59 +36,15 @@ npm start
 
 Then open [http://localhost:3000](http://localhost:3000).
 
-## Share It With Friends
-
-The easiest setup is:
-
-1. Push this project to GitHub.
-2. Deploy it as a Node web service on Render or Railway.
-3. Share the generated URL.
-
-### Push To GitHub
-
-```bash
-git init
-git add .
-git commit -m "Initial DEXterity app"
-```
-
-Then create an empty GitHub repo and connect it:
-
-```bash
-git remote add origin <your-repo-url>
-git branch -M main
-git push -u origin main
-```
-
-## Deploy On Render
-
-1. Sign in to [Render](https://render.com/).
-2. Create a new `Web Service`.
-3. Connect your GitHub repo.
-4. Use these settings:
-   - Build command: `npm install`
-   - Start command: `npm start`
-5. Deploy and share the URL Render gives you.
-
-## Deploy On Railway
-
-1. Sign in to [Railway](https://railway.com/).
-2. Create a new project from your GitHub repo.
-3. Confirm:
-   - Build command: `npm install`
-   - Start command: `npm start`
-4. Deploy and share the generated URL.
-
 ## Project Structure
 
-- [`server.js`](/Users/asantarelli/Documents/New%20project/server.js): HTTP server and API routes
-- [`lib/providers.js`](/Users/asantarelli/Documents/New%20project/lib/providers.js): provider-based data and calc architecture
-- [`public/index.html`](/Users/asantarelli/Documents/New%20project/public/index.html): app shell
-- [`public/app.js`](/Users/asantarelli/Documents/New%20project/public/app.js): client logic and rendering
-- [`public/styles.css`](/Users/asantarelli/Documents/New%20project/public/styles.css): compact dark-mode UI styling
+- `server.js`: HTTP server and API routes
+- `lib/providers.js`: provider-based data and calc architecture
+- `public/index.html`: app shell
+- `public/app.js`: client logic and rendering
+- `public/styles.css`: compact dark-mode UI styling
 
 ## Notes
 
 - The app depends on live third-party data, so occasional upstream site changes can affect parsing until adapters are updated.
-- Free hosting tiers may sleep when idle, so the first request can be slower.
 - Manual calculations use the selected sets and options, while the automatic matchup cards stay optimized for quick reference.
