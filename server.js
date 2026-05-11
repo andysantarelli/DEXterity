@@ -71,6 +71,18 @@ async function handleDamageCalc(req, res) {
   }
 }
 
+async function handleSpeedCompare(req, res) {
+  try {
+    const body = JSON.parse(await collectBody(req));
+    sendJson(res, 200, referenceService.compareSpeed(body.attacker, body.defender, body.options || {}));
+  } catch (error) {
+    sendJson(res, 400, {
+      error: 'Unable to compare speed with the current inputs.',
+      details: error.message,
+    });
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   const reqUrl = new URL(req.url, `http://${req.headers.host}`);
 
@@ -81,6 +93,11 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'POST' && reqUrl.pathname === '/api/calc') {
     await handleDamageCalc(req, res);
+    return;
+  }
+
+  if (req.method === 'POST' && reqUrl.pathname === '/api/speed') {
+    await handleSpeedCompare(req, res);
     return;
   }
 

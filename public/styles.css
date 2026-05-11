@@ -310,6 +310,33 @@ button:hover {
   font: 700 0.7rem/1 var(--mono);
 }
 
+.type-matchup-list {
+  display: grid;
+  gap: 10px;
+}
+
+.matchup-group {
+  display: grid;
+  gap: 6px;
+}
+
+.matchup-group strong {
+  font-family: var(--mono);
+  font-size: 0.79rem;
+  color: var(--muted);
+}
+
+.matchup-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.matchup-empty {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
 .stat-list,
 .summary-list,
 .build-list {
@@ -398,6 +425,35 @@ hr {
   background: var(--panel-strong);
 }
 
+.speed-pill {
+  margin-bottom: 8px;
+  padding: 7px 9px;
+  border-radius: 10px;
+  font: 700 0.77rem/1.35 var(--mono);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.speed-win {
+  background: rgba(127, 217, 169, 0.12);
+  color: var(--success);
+}
+
+.speed-loss {
+  background: rgba(255, 142, 110, 0.12);
+  color: #ff9c84;
+}
+
+.speed-tailwind {
+  background: rgba(122, 184, 255, 0.12);
+  color: #9bc8ff;
+}
+
+.speed-tie {
+  background: rgba(255, 214, 102, 0.12);
+  color: #ffd666;
+}
+
 .matchup-head {
   display: flex;
   justify-content: space-between;
@@ -439,6 +495,10 @@ hr {
 .matchup-line p {
   color: var(--muted);
   font-size: 0.82rem;
+}
+
+.speed-benchmark-card .speed-pill {
+  margin-bottom: 0;
 }
 
 .threat-line strong {
@@ -503,6 +563,12 @@ hr {
   margin-top: 12px;
 }
 
+.calc-action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .calc-advanced {
   margin-top: 12px;
   border: 1px solid var(--line);
@@ -524,7 +590,7 @@ hr {
 
 .advanced-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 9px;
   margin-top: 10px;
 }
@@ -536,7 +602,7 @@ hr {
 }
 
 .advanced-toggles {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   margin-top: 10px;
 }
@@ -574,6 +640,43 @@ hr {
 .calc-result.empty {
   background: rgba(255, 255, 255, 0.03);
   color: var(--muted);
+}
+
+.speed-result {
+  margin-top: 10px;
+  border-radius: 14px;
+  padding: 12px;
+  min-height: 82px;
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+}
+
+.speed-result.empty {
+  color: var(--muted);
+}
+
+.speed-result-head {
+  font: 700 0.9rem/1.35 var(--mono);
+}
+
+.speed-result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.speed-result-grid strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.speed-result-grid p {
+  color: inherit;
+  font-size: 0.84rem;
+  line-height: 1.35;
 }
 
 .calc-range {
@@ -640,6 +743,10 @@ hr {
   .advanced-grid,
   .advanced-toggles {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .speed-result-grid {
+    grid-template-columns: 1fr;
   }
 
   .pokemon-head {

@@ -9,17 +9,23 @@ const defenderBuildSelect = document.querySelector('#defender-build');
 const moveSelect = document.querySelector('#move-select');
 const calcStatus = document.querySelector('#calc-status');
 const calcResult = document.querySelector('#calc-result');
+const speedResult = document.querySelector('#speed-result');
 const loadDefenderButton = document.querySelector('#load-defender');
 const runCalcButton = document.querySelector('#run-calc');
+const runSpeedButton = document.querySelector('#run-speed');
 const weatherSelect = document.querySelector('#calc-weather');
 const terrainSelect = document.querySelector('#calc-terrain');
 const attackerStageSelect = document.querySelector('#attacker-stage');
 const defenderStageSelect = document.querySelector('#defender-stage');
+const attackerSpeedStageSelect = document.querySelector('#attacker-speed-stage');
+const defenderSpeedStageSelect = document.querySelector('#defender-speed-stage');
 const helpingHandInput = document.querySelector('#calc-helping-hand');
 const burnedInput = document.querySelector('#calc-burned');
 const reflectInput = document.querySelector('#calc-reflect');
 const lightScreenInput = document.querySelector('#calc-light-screen');
 const critInput = document.querySelector('#calc-crit');
+const attackerTailwindInput = document.querySelector('#atk-tailwind');
+const defenderTailwindInput = document.querySelector('#def-tailwind');
 
 const state = {
   currentLookup: null,
@@ -34,6 +40,8 @@ for (let stage = 6; stage >= -6; stage -= 1) {
   const selected = stage === 0 ? ' selected' : '';
   attackerStageSelect.insertAdjacentHTML('beforeend', `<option value="${stage}"${selected}>${label}</option>`);
   defenderStageSelect.insertAdjacentHTML('beforeend', `<option value="${stage}"${selected}>${label}</option>`);
+  attackerSpeedStageSelect.insertAdjacentHTML('beforeend', `<option value="${stage}"${selected}>${label}</option>`);
+  defenderSpeedStageSelect.insertAdjacentHTML('beforeend', `<option value="${stage}"${selected}>${label}</option>`);
 }
 
 function setLookupStatus(message, isError = false) {
@@ -228,6 +236,33 @@ function renderAbilities(abilities) {
     .join('');
 }
 
+function renderTypeMatchupGroup(title, entries, emptyLabel) {
+  return `
+    <div class="matchup-group">
+      <strong>${escapeHtml(title)}</strong>
+      <div class="matchup-chip-row">
+        ${
+          entries?.length
+            ? entries.map((entry) => `<span class="pill ${typeClassName(entry.type)}">${escapeHtml(entry.label)}</span>`).join('')
+            : `<span class="matchup-empty">${escapeHtml(emptyLabel)}</span>`
+        }
+      </div>
+    </div>
+  `;
+}
+
+function renderTypeMatchups(typeMatchups) {
+  if (!typeMatchups) {
+    return '<p class="build-summary">Type matchup data unavailable.</p>';
+  }
+
+  return [
+    renderTypeMatchupGroup('Weak', typeMatchups.weaknesses, 'No weaknesses'),
+    renderTypeMatchupGroup('Resist', typeMatchups.resistances, 'No resistances'),
+    renderTypeMatchupGroup('Immune', typeMatchups.immunities, 'No immunities'),
+  ].join('');
+}
+
 function renderQuickCalcs(rows) {
   if (!rows?.length) {
     return `
@@ -251,6 +286,15 @@ function renderQuickCalcs(rows) {
               <span>${escapeHtml(row.defender.spread || 'No spread')}</span>
             </div>
           </div>
+          ${
+            row.speed
+              ? `
+                <div class="speed-pill ${escapeHtml(row.speed.winner === 'attacker' ? 'speed-win' : row.speed.winner === 'defender' ? 'speed-loss' : 'speed-tie')}">
+                  ${escapeHtml(row.speed.summary)}
+                </div>
+              `
+              : ''
+          }
           <div class="matchup-lines">
             ${row.offense
               .map(
@@ -277,6 +321,63 @@ function renderQuickCalcs(rows) {
       `
     )
     .join('');
+}
+
+function renderSpeedBenchmarks(rows) {
+  if (!rows?.length) {
+    return `
+      <div class="matchup-card">
+        <p class="build-summary">Automatic speed benchmarks are unavailable when usage data is missing.</p>
+      </div>
+    `;
+  }
+
+  return rows
+    .map(
+      (row) => `
+        <article class="matchup-card speed-benchmark-card">
+          <div class="matchup-head">
+            <div>
+              <h3>${escapeHtml(row.label)}</h3>
+              <p>${escapeHtml(row.usage.toFixed(1))}% usage</p>
+            </div>
+            <div class="matchup-meta">
+              <span>${escapeHtml(row.item || 'No item')}</span>
+              <span>${escapeHtml(row.spread || 'No spread')}</span>
+            </div>
+          </div>
+          <div class="speed-pill ${escapeHtml(row.verdict === 'outspeeds' ? 'speed-win' : row.verdict === 'tie' ? 'speed-tie' : row.verdict === 'tailwind' ? 'speed-tailwind' : 'speed-loss')}">
+            ${escapeHtml(row.detail)}
+          </div>
+        </article>
+      `
+    )
+    .join('');
+}
+
+function renderSpeedResult(data) {
+  const classes = ['speed-result'];
+  if (!data) classes.push('empty');
+  else classes.push(data.winner === 'attacker' ? 'speed-win' : data.winner === 'defender' ? 'speed-loss' : 'speed-tie');
+  speedResult.className = classes.join(' ');
+  if (!data) {
+    speedResult.innerHTML = '<p>Speed comparison will land here.</p>';
+    return;
+  }
+
+  speedResult.innerHTML = `
+    <div class="speed-result-head">${escapeHtml(data.summary)}</div>
+    <div class="speed-result-grid">
+      <div>
+        <strong>${escapeHtml(data.attacker.name)}</strong>
+        <p>${escapeHtml(data.attacker.detail)}</p>
+      </div>
+      <div>
+        <strong>${escapeHtml(data.defender.name)}</strong>
+        <p>${escapeHtml(data.defender.detail)}</p>
+      </div>
+    </div>
+  `;
 }
 
 function renderSourceLinks(usage, game8) {
@@ -308,7 +409,7 @@ function renderSourceLinks(usage, game8) {
 }
 
 function renderPokemonPanel(data) {
-  const { pokemon, game8, usage, quickCalcs } = data;
+  const { pokemon, game8, usage, quickCalcs, speedBenchmarks } = data;
   const commonMoves = getDisplayedCommonMoves(usage);
   const commonItems = getDisplayedCommonItems(usage, game8);
   const commonSpreads = getDisplayedCommonSpreads(usage, game8);
@@ -346,6 +447,10 @@ function renderPokemonPanel(data) {
         <div class="ability-list">${renderAbilities(pokemon.abilities)}</div>
       </section>
       <section class="mini-panel">
+        <p class="eyebrow">Type Matchups</p>
+        <div class="type-matchup-list">${renderTypeMatchups(pokemon.typeMatchups)}</div>
+      </section>
+      <section class="mini-panel">
         <p class="eyebrow">Common Moves</p>
         <div class="summary-list">${renderPercentRows(commonMoves.items, 'No common moves found')}</div>
         <p class="source-note">${escapeHtml(commonMoves.label)}</p>
@@ -360,6 +465,14 @@ function renderPokemonPanel(data) {
         <p class="source-note">Items: ${escapeHtml(commonItems.label)} · EVs: ${escapeHtml(commonSpreads.label)}</p>
       </section>
     </div>
+
+    <section>
+      <div class="section-head">
+        <p class="eyebrow">Speed Benchmarks</p>
+        <p class="section-note">Common-set speed checks against the current meta.</p>
+      </div>
+      <div class="matchup-list">${renderSpeedBenchmarks(speedBenchmarks)}</div>
+    </section>
 
     <section>
       <div class="section-head">
@@ -465,6 +578,23 @@ function updateMoveOptions() {
   moveSelect.innerHTML = options.join('');
 }
 
+function buildSpeedOptions() {
+  return {
+    attacker: {
+      speedStage: Number(attackerSpeedStageSelect.value || 0),
+      isTailwind: attackerTailwindInput.checked,
+      weather: weatherSelect.value || undefined,
+      terrain: terrainSelect.value || undefined,
+    },
+    defender: {
+      speedStage: Number(defenderSpeedStageSelect.value || 0),
+      isTailwind: defenderTailwindInput.checked,
+      weather: weatherSelect.value || undefined,
+      terrain: terrainSelect.value || undefined,
+    },
+  };
+}
+
 function fillRoleFromLookup(role) {
   if (!state.currentLookup) {
     setCalcStatus('Load a Pokemon first so there is something to copy into the calculator.', true);
@@ -508,6 +638,7 @@ lookupForm.addEventListener('submit', async (event) => {
     const data = await fetchPokemon(query);
     state.currentLookup = data;
     renderPokemonPanel(data);
+    renderSpeedResult(null);
     setLookupStatus(`Loaded ${data.pokemon.name}.`);
   } catch (error) {
     setLookupStatus(error.message, true);
@@ -603,6 +734,44 @@ runCalcButton.addEventListener('click', async () => {
   } catch (error) {
     calcResult.classList.add('empty');
     calcResult.innerHTML = '<p>Damage output will land here.</p>';
+    setCalcStatus(error.message, true);
+  }
+});
+
+runSpeedButton.addEventListener('click', async () => {
+  if (!state.attacker) {
+    setCalcStatus('Load or copy an attacker into the calculator first.', true);
+    return;
+  }
+  if (!state.defender) {
+    setCalcStatus('Load a defender into the calculator first.', true);
+    return;
+  }
+
+  const payload = {
+    attacker: buildPayloadFromSelection(state.attacker, attackerBuildSelect.value),
+    defender: buildPayloadFromSelection(state.defender, defenderBuildSelect.value),
+    options: buildSpeedOptions(),
+  };
+
+  setCalcStatus('Comparing speed...');
+
+  try {
+    const response = await fetch('/api/speed', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.details || data.error || 'Speed comparison failed');
+    }
+    renderSpeedResult(data);
+    setCalcStatus('Speed comparison ready.');
+  } catch (error) {
+    renderSpeedResult(null);
     setCalcStatus(error.message, true);
   }
 });
